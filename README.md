@@ -9,7 +9,7 @@ But then I really wanted to create one in the mothertongue of my girlfried, beca
 
 By using the underlying data of [https://github.com/hdaSprachtechnologie/odenet/](https://github.com/hdaSprachtechnologie/odenet) I created this random word generator.
 
-[alexcherrypi.github.io/nsanamegenerator/](https://alexcherrypi.github.io/nsanamegenerator/), [alexcherrypi.github.io/BNDnamegenerator/](https://alexcherrypi.github.io/BNDnamegenerator/) currently only behaves like the OG version of [alexcherrypi.github.io/nsanamegenerator/og/](https://alexcherrypi.github.io/nsanamegenerator/og/) that combines two nouns, in all caps and witout any space to seperate the words.
+[alexcherrypi.github.io/BNDnamegenerator/](https://alexcherrypi.github.io/BNDnamegenerator/) currently only behaves like the OG version of [alexcherrypi.github.io/nsanamegenerator/og/](https://alexcherrypi.github.io/nsanamegenerator/og/) that combines two nouns, in all caps and witout any space to seperate the words.
 
 This is just a little side project of mine, so don't expect regular updates and a lot of ongoing development.
 
