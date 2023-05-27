@@ -1,4 +1,4 @@
-# nsanamegenerator
+# bndnamegenerator
 
 [![Deploy bndnamegenerator](https://github.com/AlexCherrypi/bndnamegenerator/actions/workflows/deploy.yml/badge.svg)](https://github.com/AlexCherrypi/bndnamegenerator/actions/workflows/deploy.yml) [![CC BY-SA 4.0][cc-by-sa-shield]][cc-by-sa]
 
