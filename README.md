@@ -1,6 +1,6 @@
 # bndnamegenerator
 
-[![Deploy bndnamegenerator](https://github.com/AlexCherrypi/bndnamegenerator/actions/workflows/deploy.yml/badge.svg)](https://github.com/AlexCherrypi/bndnamegenerator/actions/workflows/deploy.yml) [![CC BY-SA 4.0][cc-by-sa-shield]][cc-by-sa]
+[![Deploy bndnamegenerator](https://github.com/AlexCherrypi/BNDnamegenerator/actions/workflows/deploy.yml/badge.svg)](https://github.com/AlexCherrypi/bndnamegenerator/actions/workflows/deploy.yml) [![CC BY-SA 4.0][cc-by-sa-shield]][cc-by-sa]
 
 You might remember the old [nsanamegenerator.com](https://web.archive.org/web/20160318190656/http://www.nsanamegenerator.com/). 
 In homage to that page I firstly created [alexcherrypi.github.io/nsanamegenerator/](https://alexcherrypi.github.io/nsanamegenerator/). 
