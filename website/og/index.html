@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>NSA Name Generator</title>
+<script src="https://alexcherrypi.github.io/nsanamegenerator/random.js"></script>
+<style>
+.text {
+	text-align: center;
+	padding-top: 200px;
+	font-weight: bold;
+	font-size: 60pt;
+	font-family: Arial, sans-serif;
+	text-decoration: none;
+	color: black;
+}
+</style>
+</head>
+<body>
+<p class="text" id="text"></p>
+<script>
+async function run () {
+ document.getElementById("text").innerText = (await random('nsgl') + await random('nsgl')).toUpperCase();
+}
+run()
+</script>
+</body>
+</html>
