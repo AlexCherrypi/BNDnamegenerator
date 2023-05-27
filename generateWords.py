@@ -7,7 +7,7 @@ import os
 startingDir = './website/words/'
 
 
-url = 'https://github.com/hdaSprachtechnologie/odenet/blob/master/odenet/wordnet/deWordNet.xml'
+url = 'https://raw.githubusercontent.com/hdaSprachtechnologie/odenet/master/odenet/wordnet/deWordNet.xml'
 print("Downloading from '"+ url +"'")
 download = requests.get(url).content
 print("Download from '"+ url +"' finished")
@@ -79,7 +79,7 @@ for  key, value in words.items():
     print("Generating files for key '"+key+"' in '"+os.path.abspath(startingDir+key)+"'...")
     pos = 0
     for word in words[key]:
-        with open(startingDir+key+'/'+str(pos)+'.txt', 'w') as f:
+        with open(startingDir+key+'/'+str(pos)+'.txt', 'w', encoding="utf-8") as f:
             f.write(word)
         pos = pos + 1
     with open(startingDir+key+'/len.txt', 'w') as f:
