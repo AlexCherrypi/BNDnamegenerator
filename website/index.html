@@ -20,7 +20,12 @@
 <p class="text" id="text"></p>
 <script>
 async function run () {
- document.getElementById("text").innerText = (await random('nsu') + await random('nsu')).toUpperCase().replaceAll('/\s/', '');
+var first = await random('nsu');
+var second = await random('nsgu');
+if first.endsWith('heit') or first.endsWith('keit') or first.endsWith('ung') {
+   first = await first + 's'
+}
+document.getElementById("text").innerText = ( await first + await second ).toUpperCase().replaceAll('/\s/', '');
 }
 run()
 </script>
