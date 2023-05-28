@@ -22,7 +22,7 @@
 async function run () {
 var first = await random('nsu');
 var second = await random('nsgu');
-if first.endsWith('heit') or first.endsWith('keit') or first.endsWith('ung') {
+if ( (await first).endsWith('heit') || (await first).endsWith('keit') || (await first).endsWith('ung') ) {
    first = await first + 's'
 }
 document.getElementById("text").innerText = ( await first + await second ).toUpperCase().replaceAll('/\s/', '');
