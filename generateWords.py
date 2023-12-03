@@ -28,7 +28,7 @@ print("Finding and sorting words ...")
 for lemma in lemmas:
     pos  = lemma.getAttribute('partOfSpeech')
     word = lemma.getAttribute('writtenForm')
-    if not word.isdigit() and len(word) > 2:
+    if not word.isdigit() and not ['.',',','/','\\'] in word and len(word) > 2:
         words.setdefault(pos,set())
         words[pos].add(word)
         name = pos
@@ -50,7 +50,7 @@ for lemma in lemmas:
             words[pos+'d'].add(word)
         else: 
             name = name +'g'
-            words.setdefault(pos+'g',set()) # l for lower 
+            words.setdefault(pos+'g',set()) # g for no dash 
             words[pos+'g'].add(word)
 
         words.setdefault(name,set()) # combined
