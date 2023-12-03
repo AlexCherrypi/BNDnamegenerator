@@ -22,6 +22,9 @@
 async function run () {
 var first = await random('nsgu');
 var second = await random('nsgu');
+while ((await first).endsWith('e')) {
+first = await random('nsgu');
+}
 if ( (await first).endsWith('heit') || (await first).endsWith('keit') || (await first).endsWith('ung') || (await first).endsWith('schaft') || (await first).endsWith('tät') || (await first).endsWith('ik') || (await first).endsWith('um') || (await first).endsWith('erk') || (await first).endsWith('irk')) {
    first = await first + 's'
 } else if ((await first).endsWith('ent') || (await first).endsWith('and') || (await first).endsWith('ant') || (await first).endsWith('ist') ) {
