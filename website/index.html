@@ -24,10 +24,12 @@ var first = await random('nsgu');
 var second = await random('nsgu');
 if ( (await first).endsWith('heit') || (await first).endsWith('keit') || (await first).endsWith('ung') || (await first).endsWith('schaft') ||(await first).endsWith('tät') || (await first).endsWith('ik') || (await first).endsWith('um')) {
    first = await first + 's'
-} else if ((await first).endsWith('e') || (await first).endsWith('ent') || (await first).endsWith('and') || (await first).endsWith('ant') || (await first).endsWith('ist') ) {
+} else if ((await first).endsWith('ent') || (await first).endsWith('and') || (await first).endsWith('ant') || (await first).endsWith('ist') ) {
    first = await first + 'en'
 } else if ((await first).endsWith('in') || (await first).endsWith('ion')) {
    first = await first + 'nen'
+} else if ( (await first).endsWith('e') ) {
+  first = await first + 'n'
 }
 document.getElementById("text").innerText = ( await first + await second ).toUpperCase().replaceAll('/\s/', '');
 }
