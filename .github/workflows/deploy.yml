@@ -1,5 +1,5 @@
 # Builds the word lists from the dictionary and deploys the website to GitHub Pages.
-# This file is identical in BNDnamegenerator and nsanamegenerator except for its name.
+# This file is the same in BNDnamegenerator and nsanamegenerator except for name and schedule.
 name: Deploy BNDnamegenerator
 
 on:
@@ -8,7 +8,7 @@ on:
     branches: ["main"]
   # Picks up dictionary updates
   schedule:
-    - cron: '0 3 3 * *'  # on the third of the month at 3am
+    - cron: '0 3 * * *'  # every day at 3am
 
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
