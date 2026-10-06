@@ -1,21 +1,20 @@
 from defusedxml.minidom import parseString
-import gzip 
 import requests
-from random import randint
+import random
 import os
+from fugen import Fugen
 
 startingDir = './website/words/'
 
 
 url = 'https://raw.githubusercontent.com/hdaSprachtechnologie/odenet/master/odenet/wordnet/deWordNet.xml'
 print("Downloading from '"+ url +"'")
-download = requests.get(url).content
+response = requests.get(url, timeout=600)
+response.raise_for_status()
+xml = response.content
+del response
 print("Download from '"+ url +"' finished")
 del url
-# print("Decopressing ...")
-#xml = gzip.decompress(download).decode("utf-8")
-xml = download
-del download
 print("Parsing xml ...")
 file = parseString(xml)
 del xml
@@ -72,6 +71,22 @@ for lemma in lemmas:
         words.setdefault(name2,set()) # combined
         words[name2].add(word)
 del lemmas
+
+# The first word of a name gets its linking element already attached
+# (Sonne -> Sonnen, Zeitung -> Zeitungs), see fugen.py
+print("Choosing linking elements ...")
+fugen = Fugen(words['nsgu'])
+words['bestimmungswort'] = set()
+reasons = dict()
+for noun in words['nsgu']:
+    decision = fugen.decide(noun)
+    reason = decision[1] if decision else 'left out'
+    reasons[reason] = reasons.get(reason, 0) + 1
+    if decision:
+        words['bestimmungswort'].add(decision[0].apply(noun))
+print("Linking elements by "+ str(reasons) +", for example:")
+for noun in random.sample(sorted(words['nsgu']), 20):
+    print("  "+ fugen.explain(noun))
 
 print("Generating files ...")
 for  key, value in words.items():
