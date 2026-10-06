@@ -68,6 +68,11 @@ jobs:
           path: './website/words'
           key: ${{ steps.cache-words-restore.outputs.cache-primary-key }}
 
+      # Browsers keep random.js for 10 minutes, so right after a deploy a new page could
+      # run with the old script. A new address for every commit makes them load the new one.
+      - name: Version the script address
+        run: find website -name '*.html' -exec sed -i "s/random\.js\"/random.js?v=${GITHUB_SHA::7}\"/" {} +
+
       - name: Setup Pages
         uses: actions/configure-pages@v6
 
