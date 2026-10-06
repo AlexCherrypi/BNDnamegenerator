@@ -19,10 +19,19 @@
 <body>
 <p class="text" id="text"></p>
 <script>
+// [category, how many of its best known words are familiar, weight]
+const KINDS = [['animal', 150, 25], ['food', 150, 20], ['artifact', 300, 20], ['plant', 100, 10], ['body', 60, 10],
+               ['person', 200, 10], ['object', 60, 5], ['substance', 60, 5]]
+const lists = (prefix, kinds) => kinds.map(([kind, top, weight]) => [prefix + kind, top, weight])
 async function run () {
- // the first word already ends with its linking element (Sonne -> Sonnen), see fugen.py
- let w1 = await random('bestimmungswort');
- let w2 = await random('nsgu');
+ const nerd = marks('nerd', 2), vulgar = marks('vulgar', 2)
+ let w1, w2
+ do {
+  // two nouns of different kinds, the first one already ends with its linking element (Sonne -> Sonnen), see fugen.py
+  const first = choose(KINDS)
+  w1 = await pick(lists('bestimmungswort-', vulgar[0] ? [['vulgar', 100, 1]] : [first]), nerd[0]);
+  w2 = await pick(lists('nsgu-', vulgar[1] ? [['vulgar', 100, 1]] : KINDS.filter(kind => kind !== first)), nerd[1]);
+ } while (!nerd.includes(true) && (w1 + w2).length > 20 || await blocked(w1 + w2))
  document.getElementById("text").innerText = (w1 + w2).toUpperCase();
  document.title = 'BND Name Generator - '+ w1 +' + '+ w2;
 }
