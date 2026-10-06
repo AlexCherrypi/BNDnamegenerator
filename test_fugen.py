@@ -23,6 +23,13 @@ class FugeTest(unittest.TestCase):
         self.assertIsNone(Fuge(strip='e').apply('Ee'))
         self.assertIsNone(Fuge(umlaut=True, add='er').apply('Tisch'))
 
+    def test_apply_follows_german_sounds(self):
+        self.assertEqual(Fuge(add='n').apply('Bauer'), 'Bauern')
+        self.assertEqual(Fuge(strip='um', add='en').apply('Medium'), 'Medien')
+        self.assertIsNone(Fuge(add='n').apply('Wulst'))
+        self.assertIsNone(Fuge(add='s').apply('Mus'))
+        self.assertIsNone(Fuge(strip='e').apply('Magie'))
+
 
 class RuleTest(unittest.TestCase):
 
@@ -32,18 +39,32 @@ class RuleTest(unittest.TestCase):
         self.assertEqual(rule[0], fuge, word)
 
     def test_rules(self):
-        for word in ('Zeitung', 'Freiheit', 'Gesellschaft', 'Information', 'Universität', 'Frühling'):
+        for word in ('Zeitung', 'Freiheit', 'Gesellschaft', 'Information', 'Universität', 'Frühling',
+                     'Eigentum', 'Datum', 'Ursprung', 'Großhandel', 'Aktionär'):
             self.assertRule(word, Fuge(add='s'))
-        for word in ('Tourist', 'Jurist', 'Polizist'):
+        for word in ('Tourist', 'Jurist', 'Polizist', 'Gitarrist', 'Atheist', 'Egoist', 'Mitmensch'):
             self.assertRule(word, Fuge(add='en'))
-        self.assertRule('Lehrerin', Fuge(strip='in', add='innen'))
-        for word in ('Mädchen', 'Lehrer', 'Apfel', 'Musik', 'Kultur', 'Kaffee', 'Glas', 'Tisch'):
+        for word in ('Biologe', 'Pädagoge', 'Hausnummer'):
+            self.assertRule(word, Fuge(add='n'))
+        for word in ('Lehrerin', 'Studentin', 'Sekretärin', 'Autorin'):
+            self.assertRule(word, Fuge(strip='in', add='innen'))
+        for word in ('Jugendlicher', 'Delegierter', 'Beschäftigter'):
+            self.assertRule(word, Fuge(strip='r', add='n'))
+        for word in ('Mädchen', 'Lehrer', 'Apfel', 'Musik', 'Kultur', 'Kaffee', 'Glas', 'Tisch',
+                     'Therapie', 'Demokratie', 'Analyse'):
+            self.assertRule(word, NONE)
+
+    def test_words_that_only_look_like_a_rule(self):
+        # Sprung is no -ung word and Stadion no -ion word, in compounds as well
+        for word in ('Kopfsprung', 'Aufschwung', 'Stadion', 'Türspion'):
+            self.assertRule(word, NONE)
+        # compounds of Frist, Geist, List and Mist are no people on -ist
+        for word in ('Abgabefrist', 'Zeitgeist', 'Arglist', 'Bockmist'):
             self.assertRule(word, NONE)
 
     def test_ending_must_be_a_suffix(self):
-        self.assertIsNone(by_rule('Sprung'))
-        self.assertIsNone(by_rule('Frist'))
-        self.assertIsNone(by_rule('Tee'))
+        for word in ('Sprung', 'Frist', 'Tee', 'Faktum', 'Prämie', 'Geschäftsidee', 'Nitroglycerin'):
+            self.assertIsNone(by_rule(word), word)
 
 
 class FugenTest(unittest.TestCase):
@@ -58,6 +79,10 @@ class FugenTest(unittest.TestCase):
             'Zustandswechsel', 'Vorstandssitzung', 'Bestandsaufnahme',
             'Firma', 'Wagen', 'Name', 'Firmenwagen', 'Firmenname',
             'NATO', 'Garten', 'Pferd',
+            'Strand', 'Korb', 'Strandkorb', 'Rand', 'Stein', 'Randstein',
+            'Gebiet', 'Reform', 'Gebietsreform', 'Grenze', 'Grenzgebiet',
+            'Seite', 'Straße', 'Bahn', 'Straßenbahn', 'Seitenstraße',
+            'Kunde', 'Karte', 'Kundenkarte', 'Erde', 'Erdkunde', 'Erdkundebuch', 'Heimat', 'Heimatkunde',
         ])
 
     def test_attested(self):
@@ -85,9 +110,31 @@ class FugenTest(unittest.TestCase):
         self.assertEqual(self.fugen.decide('Wohlstand'), (Fuge(add='s'), 'analogy'))
         self.assertEqual(self.fugen.first_part('Wohlstand'), 'Wohlstands')
 
+    def test_conflicting_analogy_leaves_word_out(self):
+        # words on -and disagree: Zustand, Vorstand, Bestand +s, but Strand and Rand none
+        self.assertIsNone(self.fugen.decide('Verband'))
+
+    def test_head(self):
+        # a compound links like its last part
+        self.assertEqual(self.fugen.decide('Grenzgebiet'), (Fuge(add='s'), 'head'))
+        self.assertEqual(self.fugen.first_part('Seitenstraße'), 'Seitenstraßen')
+        # unless the words ending like it disagree (Kunde +n, Erdkunde none)
+        self.assertIsNone(self.fugen.decide('Heimatkunde'))
+
     def test_abbreviation(self):
         self.assertEqual(self.fugen.decide('NATO'), (NONE, 'abbreviation'))
         self.assertEqual(self.fugen.decide('CO2'), (NONE, 'abbreviation'))
+        self.assertEqual(self.fugen.decide('iPhone'), (NONE, 'abbreviation'))
+        self.assertEqual(self.fugen.decide('LehrerIn'), (NONE, 'abbreviation'))
+
+    def test_abbreviation_is_not_taken_for_a_word(self):
+        fugen = Fugen(['Leder', 'Jacke', 'Mantel', 'Lederjacke', 'Ledermantel', 'LED'])
+        self.assertEqual(fugen.decide('LED'), (NONE, 'abbreviation'))
+
+    def test_stem_change_needs_two_compounds(self):
+        # Imme - e + Unität is really Immunität, Opa - a + en + Source is Opensource
+        self.assertNotIn('imme', Fugen(['Imme', 'Unität', 'Immunität']).attested)
+        self.assertNotIn('opa', Fugen(['Opa', 'Source', 'Opensource']).attested)
 
     def test_fallback(self):
         self.assertEqual(self.fugen.decide('Pferd'), (NONE, 'fallback'))
