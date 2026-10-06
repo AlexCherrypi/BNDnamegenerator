@@ -8,7 +8,7 @@ on:
     branches: ["main"]
   # Picks up dictionary updates
   schedule:
-    - cron: '0 3 * * *'  # every day at 3am
+    - cron: '17 3 * * *'  # every day at 3:17am (not on the hour, when GitHub may skip scheduled runs)
 
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
@@ -34,8 +34,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+        uses: actions/checkout@v5
+      - uses: actions/setup-python@v6
         with:
           python-version: '3.11'
           cache: 'pip' # caching pip dependencies
@@ -52,7 +52,7 @@ jobs:
       # The words are generated at most once a day, and again as soon as a Python file changes
       - name: Restore cached words
         id: cache-words-restore
-        uses: actions/cache/restore@v4
+        uses: actions/cache/restore@v5
         with:
           path: './website/words'
           key: cache-words-${{ steps.date.outputs.date }}-${{ hashFiles('*.py', 'requirements.txt') }}
@@ -63,19 +63,19 @@ jobs:
 
       - name: Save words
         if: steps.cache-words-restore.outputs.cache-hit != 'true'
-        uses: actions/cache/save@v4
+        uses: actions/cache/save@v5
         with:
           path: './website/words'
           key: ${{ steps.cache-words-restore.outputs.cache-primary-key }}
 
       - name: Setup Pages
-        uses: actions/configure-pages@v5
+        uses: actions/configure-pages@v6
 
       - name: Upload artifact
-        uses: actions/upload-pages-artifact@v3
+        uses: actions/upload-pages-artifact@v4
         with:
           path: './website'
 
       - name: Deploy to GitHub Pages
         id: deployment
-        uses: actions/deploy-pages@v4
+        uses: actions/deploy-pages@v5

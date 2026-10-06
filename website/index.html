@@ -26,7 +26,10 @@ async function run () {
  document.getElementById("text").innerText = (w1 + w2).toUpperCase();
  document.title = 'BND Name Generator - '+ w1 +' + '+ w2;
 }
-run()
+run().catch(error => {
+ console.error(error);
+ document.getElementById("text").innerText = 'Bitte neu laden';
+});
 </script>
 </body>
 </html>

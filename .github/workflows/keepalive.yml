@@ -9,7 +9,8 @@ on:
   schedule:
     - cron: '30 4 * * 1'  # every Monday at 4:30am
 
-  # Allows you to run this workflow manually from the Actions tab
+  # Allows you to run this workflow manually from the Actions tab. A manual run
+  # always commits, so you can check that the keepalive works.
   workflow_dispatch:
 
 permissions:
@@ -20,13 +21,13 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Keepalive — preserve scheduled workflow eligibility
         run: |
           days=$(( ($(date +%s) - $(git log -1 --format=%ct)) / 86400 ))
           echo "Last commit was $days days ago"
-          if [ "$days" -lt 30 ]; then
+          if [ "$GITHUB_EVENT_NAME" = schedule ] && [ "$days" -lt 30 ]; then
             echo "repository is active — keepalive skipped"
             exit 0
           fi
