@@ -41,6 +41,8 @@ def wordnet():
         'mensch': Synset('i-animal', None, 'ein Lebewesen', []),
         'klepper': Synset('i-animal', None, 'ein altes Pferd', []),
         'menorrhagie': Synset(None, 'noun.state', 'eine Blutung', []),
+        'fut': Synset('i-body', None, 'die Vulva', []),
+        'futter': Synset('i-food', None, 'Nahrung für Tiere', []),
     }
     entries = [Entry(word, 'n', label, basic, senses) for word, label, basic, senses in [
         ('Hund', '', True, ['hund-1']), ('Schäfer', '', False, []), ('Wache', '', False, []),
@@ -55,7 +57,8 @@ def wordnet():
         ('Pferd', '', True, ['pferd']), ('Pferdeschwanz', '', False, ['pferdeschwanz']),
         ('Sau', '', False, ['sau']), ('Stoff', '', True, ['stoff']), ('Sauerstoff', '', False, ['sauerstoff']),
         ('Mensch', 'derb', True, ['mensch']), ('Klepper', 'derb, abwertend', False, ['klepper']),
-        ('Menorrhagie', 'fachspr.', False, ['menorrhagie']),
+        ('Menorrhagie', 'fachspr.', False, ['menorrhagie']), ('Fut', '', False, ['fut']),
+        ('Futter', '', True, ['futter']),
     ]]
     fugen = Fugen([entry.word for entry in entries])
     return WordInfo(entries, synsets, english, fugen)
@@ -103,6 +106,8 @@ class WordInfoTest(unittest.TestCase):
         self.assertTrue(self.info.is_vulgar('Schwanz', 'n'))
         self.assertFalse(self.info.is_vulgar('Pferdeschwanz', 'n'))  # a ponytail
         self.assertFalse(self.info.is_vulgar('Sauerstoff', 'n'))
+        self.assertTrue(self.info.is_vulgar('Fut', 'n'))
+        self.assertFalse(self.info.is_vulgar('Futter', 'n'))         # crude only on its own
         self.assertTrue(self.info.is_vulgar('Klepper', 'n'))         # labelled derb
         self.assertFalse(self.info.is_vulgar('Mensch', 'n'))         # only das Mensch is crude
         self.assertFalse(self.info.is_usable('Arsch', 'n', 'body'))

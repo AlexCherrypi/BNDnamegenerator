@@ -125,7 +125,7 @@ def english_meanings(synsets, entries):
 # (Arsch: Arschgeige, Affenarsch). In lower case.
 VULGAR_WORDS = set('''arsch arschloch arschgeige arschkriecher arschbombe arschgeweih arschtritt hintern popo podex
 allerwertester pöter pobacke hinterbacke anus scheiße scheiß schiss dünnschiss dünnpfiff kacke kacker pisse
-pisser pipi furz pups schas kotze erbrochenes durchfall exkrement fäkalien urin rotz rotze popel schnodder
+pisser pipi furz pups schas kotze erbrochenes durchfall exkrement fäkalien rotz rotze popel schnodder
 blähung flatulenz penis pimmel schniedel pillermann pillemann pullermann dödel gemächte klöten hoden vorhaut
 erektion morgenlatte möse fotze votze vagina klitoris kitzler titte titten sperma ejakulat samenerguss orgasmus
 fick bums wichser onanie masturbation sex oralsex gruppensex gangbang quickie koitus beischlaf fellatio
@@ -134,8 +134,8 @@ dildo vibrator kondom präser präservativ verhüterli bordell puffmutter zuhäl
 dirne callgirl stricher strichmädchen kokotte schlampe flittchen luder bitch weibsstück miststück mistkerl
 drecksack dreckskerl dreckschwein fettsack sauhund saubande sausack schweinehund schweinepriester zote fresse
 hackfresse bastard bankert natursekt prostituierte prostituierter freudenhaus freudenmädchen driss shit shitstorm
-bockmist mistding fäzes diarrhö diarrhöe diarrhoe hundstrümmerl harn piese urinal donnerbalken latrinenparole
-notdurft speibsackerl flatus schoas leibwind pullerparty futt fott fudi fut vulva yoni phallus testikel skrotum
+bockmist mistding fäzes diarrhö diarrhöe diarrhoe hundstrümmerl piese urinal donnerbalken latrinenparole
+notdurft speibsackerl flatus schoas leibwind pullerparty fudi vulva yoni phallus testikel skrotum
 scrotum präputium lörres zumpferl sackhalter samenflüssigkeit lusttropfen godemiché coitus kopulation gevögel
 selbstbefriedigung blasmaus blasehase fellatrix entjungferung voyeur exhibitionist perversion obszönität
 schweinigelei sauerei erotik betthäschen wüstling tussi tusse prostitution kurtisane hetäre metze musche gigolo
@@ -143,8 +143,10 @@ callboy strichjunge lude loddel pimp kuppler strizzi tripper filzlaus hundesohn 
 fettwanst dickwanst zimtzicke vollidiot knallidiot vollpfosten honk saustall'''.split())
 
 # Crude words that are no crude part of a compound: Schwanz is crude, but
-# Pferdeschwanz is a ponytail, and Kot is crude, but Kotflügel a fender.
-VULGAR_ALONE = set('''schwanz muschi pussy busen brüste möpse hupen puff sau kot wichse'''.split())
+# Pferdeschwanz is a ponytail, Kot is crude, but Kotflügel a fender, and Fut
+# is crude, but not Futter.
+VULGAR_ALONE = set('''schwanz muschi pussy busen brüste möpse hupen puff sau kot wichse after fut futt fott
+urin harn'''.split())
 
 # Slurs, words for groups of people OdeNet doesn't link to the English
 # WordNet, and words about abuse and the Nazis. Every compound with one of them
@@ -272,7 +274,7 @@ class WordInfo:
     @functools.lru_cache(maxsize=None)
     def compound_parts(self, lower):
         found = {lower}
-        for split in range(3, len(lower) - 2):
+        for split in range(3, len(lower) - MIN_SECOND_PART + 1):
             head = lower[split:]
             if head in self.lexicon:
                 for noun, fuge in self.fugen.starts.get(lower[:split], ()):
