@@ -1,14 +1,14 @@
-# Simple workflow for deploying static content to GitHub Pages
+# Builds the word lists from the dictionary and deploys the website to GitHub Pages.
+# This file is the same in BNDnamegenerator and nsanamegenerator except for name and schedule.
 name: Deploy BNDnamegenerator
 
 on:
   # Runs on pushes targeting the default branch
   push:
     branches: ["main"]
+  # Picks up dictionary updates
   schedule:
     - cron: '0 3 * * *'  # every day at 3am
-  
-  
 
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
@@ -34,54 +34,48 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
-      - uses: actions/setup-python@v4
+        uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
         with:
           python-version: '3.11'
           cache: 'pip' # caching pip dependencies
       - run: pip install -r requirements.txt
 
+      - name: Run tests
+        if: hashFiles('test_*.py') != ''
+        run: python -m unittest -v
+
       - name: Get current date
         id: date
         run: echo "date=$(date +'%Y-%m-%d')" >> "$GITHUB_OUTPUT"
-      
-      - name: Check if word buildscript changed
-        uses: dorny/paths-filter@v2
-        id: checkChanges
-        with:
-          filters: |
-            generateWords-changed:
-              - 'generateWords.py'
 
+      # The words are generated at most once a day, and again as soon as a Python file changes
       - name: Restore cached words
-        if: steps.checkChanges.outputs.generateWords-changed != 'true'
         id: cache-words-restore
-        uses: actions/cache/restore@v3
+        uses: actions/cache/restore@v4
         with:
           path: './website/words'
-          key: cache-words-${{ steps.date.outputs.date }}
+          key: cache-words-${{ steps.date.outputs.date }}-${{ hashFiles('*.py', 'requirements.txt') }}
 
       - name: Generate words
         if: steps.cache-words-restore.outputs.cache-hit != 'true'
         run: python generateWords.py
 
-      - name: Safe words
-        if: steps.cache-words-restore.outputs.cache-hit != 'true' || steps.checkChanges.outputs.generateWords-changed != 'true'
-        id: cache-words-save
-        uses: actions/cache/save@v3
+      - name: Save words
+        if: steps.cache-words-restore.outputs.cache-hit != 'true'
+        uses: actions/cache/save@v4
         with:
           path: './website/words'
-          #key: ${{ steps.cache-words-restore.outputs.cache-primary-key }}
-          key: cache-words-${{ steps.date.outputs.date }}
-     
+          key: ${{ steps.cache-words-restore.outputs.cache-primary-key }}
+
       - name: Setup Pages
-        uses: actions/configure-pages@v3
+        uses: actions/configure-pages@v5
 
       - name: Upload artifact
-        uses: actions/upload-pages-artifact@v1
+        uses: actions/upload-pages-artifact@v3
         with:
           path: './website'
 
       - name: Deploy to GitHub Pages
         id: deployment
-        uses: actions/deploy-pages@v2
+        uses: actions/deploy-pages@v4
