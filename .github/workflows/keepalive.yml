@@ -1,6 +1,8 @@
 # GitHub disables scheduled workflows in public repositories after 60 days without
-# any commit. If the repository has been quiet for a while, commit a timestamp so
-# the scheduled dictionary update keeps running.
+# repository activity. If the repository has been quiet for a while, push a tiny
+# commit updating a timestamp marker so the scheduled dictionary update keeps
+# running. Pushes made with GITHUB_TOKEN don't trigger other workflows, so this
+# doesn't cause a deploy and can't loop.
 name: Keepalive
 
 on:
@@ -20,16 +22,17 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Commit timestamp if there was no commit for 30 days
+      - name: Keepalive — preserve scheduled workflow eligibility
         run: |
           days=$(( ($(date +%s) - $(git log -1 --format=%ct)) / 86400 ))
           echo "Last commit was $days days ago"
           if [ "$days" -lt 30 ]; then
+            echo "repository is active — keepalive skipped"
             exit 0
           fi
-          date -u +'%Y-%m-%dT%H:%M:%SZ' > .github/keepalive
+          date +"%Y-%m-%dT%H:%M:%S%z" > .github/last-keepalive
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add .github/keepalive
-          git commit -m 'Keep scheduled workflows alive'
-          git push
+          git add .github/last-keepalive
+          git commit -m "chore: keepalive (preserve scheduled workflow)"
+          git push origin HEAD
